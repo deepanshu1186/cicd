@@ -12,15 +12,21 @@ env:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
 
-      - name: Sign in to Azure via Publish Profile Token
+      - name: Log in to Azure using Native OIDC Handshake
         uses: azure/login@v2
         with:
-          creds: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_8FF6309164A043FF957A533D1543EDD2 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_798ABEFB468643EDBE4E9BE37F769B96 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_CA50C1AC76894D33BD9862FCC080652F }}
 
-      - name: Native CLI Deployment
+      - name: Native CLI Webapp Deployment
         run: |
-          az webapp deploy --name sandbox --resource-group sandbox_group --src-path . --type zip
+          az webapp deploy --name sandbox --resource-group SandboxResourceGroup --src-path . --type zip
