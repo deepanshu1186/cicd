@@ -24,9 +24,6 @@ jobs:
     needs: build
     environment:
       name: 'production'
-    permissions:
-      id-token: write
-      contents: read
 
     steps:
       - name: Download artifact from build job
@@ -34,14 +31,8 @@ jobs:
         with:
           name: html-app
 
-      - name: Login to Azure using OIDC
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_8FF6309164A043FF957A533D1543EDD2 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_798ABEFB468643EDBE4E9BE37F769B96 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_CA50C1AC76894D33BD9862FCC080652F }}
-
-      - name: 'Deploy to Azure Web App'
+      - name: 'Deploy to Azure Web App via Publish Profile.'
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'sandbox'
+          app-name: 'sandbox' # This matches the internal site name in the XML
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
