@@ -27,6 +27,9 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_798ABEFB468643EDBE4E9BE37F769B96 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_CA50C1AC76894D33BD9862FCC080652F }}
 
-      - name: Native CLI Webapp Deployment
+      - name: Pre-package repository files into artifact
+        run: zip -r deploy.zip . -x "*.git*"
+
+      - name: Native CLI Webapp Deployment via Artifact
         run: |
-          az webapp deploy --name sandbox --resource-group SandboxResourceGroup --src-path . --type zip
+          az webapp deploy --name sandbox --resource-group SandboxResourceGroup --src-path deploy.zip --type zip
