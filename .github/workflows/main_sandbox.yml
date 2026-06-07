@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true  # Fixes the Node.js deprecation warning!
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   deploy:
@@ -16,11 +16,11 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v4
 
-      - name: 'FTP Deploy directly to Azure'
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      - name: Sign in to Azure via Publish Profile Token
+        uses: azure/login@v2
         with:
-          server: 'waws-prod-ma1-021.ftp.azurewebsites.windows.net'
-          username: 'sandbox\$sandbox'
-          password: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          local-dir: './'
-          server-dir: '/site/wwwroot/'
+          creds: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+
+      - name: Native CLI Deployment
+        run: |
+          az webapp deploy --name sandbox --resource-group sandbox_group --src-path . --type zip
