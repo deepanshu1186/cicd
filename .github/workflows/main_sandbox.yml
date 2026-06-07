@@ -6,17 +6,21 @@ on:
       - main
   workflow_dispatch:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true  # Fixes the Node.js deprecation warning!
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
 
-      - name: 'Deploy to Azure Web App'
-        uses: azure/webapps-deploy@v3
+      - name: 'FTP Deploy directly to Azure'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          app-name: 'sandbox'
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: '.' # This deploys your files directly from the repository root
+          server: 'waws-prod-ma1-021.ftp.azurewebsites.windows.net'
+          username: 'sandbox\$sandbox'
+          password: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          local-dir: './'
+          server-dir: '/site/wwwroot/'
